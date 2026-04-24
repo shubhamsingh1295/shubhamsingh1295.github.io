@@ -759,7 +759,7 @@ section {
 }
 .contact-methods {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 12px;
   margin-bottom: 40px;
 }
@@ -803,11 +803,14 @@ section {
   margin-bottom: 2px;
 }
 .contact-method-value {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text);
   font-family: var(--mono);
-  word-break: break-all;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.4;
 }
+.contact-method > div:last-child { min-width: 0; flex: 1; }
 
 /* ===== Footer ===== */
 footer {
