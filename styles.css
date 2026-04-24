@@ -845,6 +845,14 @@ footer .glyph { color: var(--accent); }
   .topbar-tabs { display: none; }
   section { padding: 56px 0; }
   .terminal-body { min-height: 260px; }
+  .section-header { flex-wrap: wrap; row-gap: 8px; }
+  .section-meta { margin-left: 0; width: 100%; }
+  .projects-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .status-indicator span:last-child { display: none; }
+  .terminal-body { padding: 16px; font-size: 12px; }
 }
 
 @media (max-width: 560px) {
@@ -853,4 +861,28 @@ footer .glyph { color: var(--accent); }
   .skills-grid { grid-template-columns: 1fr 1fr; }
   .stats { grid-template-columns: 1fr 1fr; }
   .section-title { font-size: 22px; }
+  .hero-cta { width: 100%; }
+  .hero-cta .btn { flex: 1 1 100%; justify-content: center; }
+  .job-meta { gap: 8px; }
+  .job-role { font-size: 16px; }
+  .contact { padding: 60px 16px; }
+  .contact-methods { grid-template-columns: 1fr; }
+  .stat { padding: 16px; }
+  .stat-num { font-size: 28px; }
+  .topbar { padding: 0 10px; }
+  .topbar-dots { margin-right: 10px; gap: 6px; }
+  .topbar-dots .dot { width: 10px; height: 10px; }
+  footer { padding: 20px 16px; font-size: 11px; line-height: 1.6; }
+  .info-card { padding: 18px; }
+  .edu-sub, .cert-sub { flex-direction: column; gap: 2px; }
+  .section-header { margin-bottom: 32px; }
+  .timeline { padding-left: 24px; }
+  .job::before { left: -24px; }
+  .job::after { left: -20px; }
+}
+
+@media (max-width: 380px) {
+  .skills-grid { grid-template-columns: 1fr; }
+  .terminal-body { padding: 12px; font-size: 11.5px; }
+  .hero h1 { font-size: 36px; }
 }
