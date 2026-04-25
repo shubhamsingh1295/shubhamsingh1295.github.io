@@ -812,14 +812,15 @@ section {
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  background: transparent;
-  color: var(--text-dim);
+  background: var(--bg-elev-2);
+  color: var(--accent);
   text-decoration: none;
-  transition: color 0.18s, background 0.18s;
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
 }
 .icon-btn:hover {
-  color: var(--accent);
-  background: var(--bg-elev-2);
+  background: var(--bg-elev);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.15);
 }
 .contact-method {
   background: var(--bg-elev);
