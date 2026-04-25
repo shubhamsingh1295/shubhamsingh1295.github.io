@@ -293,14 +293,6 @@ section {
   flex-wrap: wrap;
   align-items: center;
 }
-.btn-icon-only {
-  padding: 0;
-  width: 42px;
-  height: 42px;
-  justify-content: center;
-  flex: 0 0 auto;
-  color: var(--accent);
-}
 .btn {
   display: inline-flex;
   align-items: center;
@@ -335,6 +327,21 @@ section {
   border-color: var(--accent-line);
   color: var(--accent);
   background: var(--accent-dim);
+}
+.btn.btn-icon-only {
+  padding: 0;
+  gap: 0;
+  width: 42px;
+  height: 42px;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+.btn.btn-icon-only:hover {
+  color: var(--accent);
+  border-color: var(--accent-line);
+  background: var(--accent-dim);
+  transform: translateY(-1px);
 }
 
 /* Terminal card */
