@@ -291,6 +291,15 @@ section {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: center;
+}
+.btn-icon-only {
+  padding: 0;
+  width: 42px;
+  height: 42px;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--accent);
 }
 .btn {
   display: inline-flex;
@@ -922,6 +931,7 @@ footer .glyph { color: var(--accent); }
   .section-title { font-size: 22px; }
   .hero-cta { width: 100%; }
   .hero-cta .btn { flex: 1 1 100%; justify-content: center; }
+  .hero-cta .btn-icon-only { flex: 0 0 auto; width: 42px; height: 42px; }
   .job-meta { gap: 8px; }
   .job-role { font-size: 16px; }
   .contact { padding: 60px 16px; }
