@@ -911,3 +911,29 @@ footer .glyph { color: var(--accent); }
   .terminal-body { padding: 12px; font-size: 11.5px; }
   .hero h1 { font-size: 36px; }
 }
+
+/* Keyboard focus indicator (visible only for keyboard users via :focus-visible) */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.tab:focus-visible,
+.contact-method:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .cursor, .pulse { animation: none !important; }
+}
