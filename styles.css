@@ -796,28 +796,30 @@ section {
 }
 .contact-icons {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 36px;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: fit-content;
+  margin: 0 auto 36px;
 }
 .icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
-  background: var(--bg-elev);
-  border: 1px solid var(--border);
+  background: transparent;
   color: var(--text-dim);
   text-decoration: none;
-  transition: color 0.18s, border-color 0.18s, background 0.18s, transform 0.18s;
+  transition: color 0.18s, background 0.18s;
 }
 .icon-btn:hover {
   color: var(--accent);
-  border-color: var(--accent);
-  background: var(--bg-elev-2, var(--bg-elev));
-  transform: translateY(-2px);
+  background: var(--bg-elev-2);
 }
 .contact-method {
   background: var(--bg-elev);
