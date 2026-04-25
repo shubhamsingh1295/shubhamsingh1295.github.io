@@ -782,11 +782,42 @@ section {
   margin-bottom: 32px;
   font-family: var(--sans);
 }
+.contact .contact-sub {
+  font-size: 13px;
+  color: var(--text-muted, var(--text-dim));
+  letter-spacing: 0.01em;
+  margin-bottom: 28px;
+}
 .contact-methods {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 12px;
-  margin-bottom: 40px;
+  margin-bottom: 16px;
+}
+.contact-icons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.18s, border-color 0.18s, background 0.18s, transform 0.18s;
+}
+.icon-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--bg-elev-2, var(--bg-elev));
+  transform: translateY(-2px);
 }
 .contact-method {
   background: var(--bg-elev);
