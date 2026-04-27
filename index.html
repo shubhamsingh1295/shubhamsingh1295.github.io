@@ -159,7 +159,7 @@
       <div class="section-header reveal">
         <span class="section-num">04</span>
         <h2 class="section-title"><span class="bracket">{</span> featured projects <span class="bracket">}</span></h2>
-        <span class="section-meta">// ls - la ./projects</span>
+        <span class="section-meta">// ls -la ./projects</span>
       </div>
       <div class="projects-grid reveal" id="projectsGrid"></div>
     </section>
@@ -493,7 +493,7 @@ var PROJECTS = [
 // ============ SKILLS FILTER ============
 (function(){
   var cats = ['All'];
-  SKILLS.forEach(function(s){ if (cats.indexOf(s.cat) === - 1) cats.push(s.cat); });
+  SKILLS.forEach(function(s){ if (cats.indexOf(s.cat) === -1) cats.push(s.cat); });
   var filterEl = document.getElementById('skillsFilter');
   var gridEl = document.getElementById('skillsGrid');
   var active = 'All';
@@ -574,7 +574,7 @@ var PROJECTS = [
         io.unobserve(e.target);
       }
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px - 40px 0px' });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 })();
 
