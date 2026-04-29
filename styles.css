@@ -1405,7 +1405,7 @@ img, svg, video { max-width: 100%; height: auto; }
 }
 .resume-modal-head {
   display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px;
+  padding: 10px 14px;
   background: var(--bg-elev-2);
   border-bottom: 1px solid var(--border);
   font-family: var(--mono);
@@ -1413,8 +1413,17 @@ img, svg, video { max-width: 100%; height: auto; }
   color: var(--text-dim);
   flex-shrink: 0;
 }
-.resume-modal-title { flex: 1; }
-.resume-modal-actions { display: flex; align-items: center; gap: 8px; }
+.resume-modal-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.resume-modal-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.resume-modal-actions .modal-close {
+  position: static;
+  top: auto; right: auto;
+}
 .btn-sm { padding: 7px 12px !important; font-size: 11px !important; }
 .resume-frame {
   flex: 1;
