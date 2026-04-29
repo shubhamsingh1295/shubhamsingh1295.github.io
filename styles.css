@@ -915,6 +915,8 @@ footer .glyph { color: var(--accent); }
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; gap: 32px; min-height: auto; padding: 40px 0 60px; }
+  .hero-left { max-width: 100%; }
+  .hero-desc { max-width: 100%; }
   .about-grid { grid-template-columns: 1fr; }
   .two-col { grid-template-columns: 1fr; }
   .topbar-tabs { display: none; }
@@ -936,12 +938,16 @@ footer .glyph { color: var(--accent); }
   .skills-grid { grid-template-columns: 1fr 1fr; }
   .stats { grid-template-columns: 1fr 1fr; }
   .section-title { font-size: 22px; }
+  .section-header { gap: 10px; }
+  .section-meta { font-size: 11px; }
   .hero-cta { width: 100%; }
   .hero-cta .btn { flex: 1 1 100%; justify-content: center; }
   .hero-cta .btn-icon-only { flex: 0 0 auto; width: 42px; height: 42px; }
+  .job-header { gap: 4px; }
   .job-meta { gap: 8px; }
-  .job-role { font-size: 16px; }
-  .contact { padding: 60px 16px; }
+  .job-role { font-size: 16px; word-break: break-word; }
+  .job-desc li { font-size: 13px; padding-left: 16px; }
+  .contact { padding: 60px 0; max-width: 100%; }
   .contact-methods { grid-template-columns: 1fr; }
   .stat { padding: 16px; }
   .stat-num { font-size: 28px; }
@@ -952,16 +958,28 @@ footer .glyph { color: var(--accent); }
   .info-card { padding: 18px; }
   .edu-sub, .cert-sub { flex-direction: column; gap: 2px; }
   .section-header { margin-bottom: 32px; }
-  .timeline { padding-left: 24px; }
-  .job::before { left: -24px; }
-  .job::after { left: -20px; }
+  .timeline { padding-left: 22px; padding-right: 4px; }
+  .job::before { left: -22px; width: 14px; height: 14px; }
+  .job::after { left: -18px; top: 11px; width: 8px; height: 8px; }
+  .timeline::before { left: 6px; }
+  .terminal { width: 100%; }
+  .hero h1 { word-break: break-word; }
+  .skill { padding: 10px 12px; font-size: 12px; }
+  .filter-btn { padding: 5px 10px; font-size: 11px; }
 }
 
 @media (max-width: 380px) {
   .skills-grid { grid-template-columns: 1fr; }
   .terminal-body { padding: 12px; font-size: 11.5px; }
   .hero h1 { font-size: 36px; }
+  .stats { grid-template-columns: 1fr; }
+  .stat-num { font-size: 26px; }
 }
+
+/* prevent horizontal overflow on any device */
+html, body { overflow-x: hidden; max-width: 100%; }
+img, svg, video { max-width: 100%; height: auto; }
+.project-visual svg { width: 100%; }
 
 /* Keyboard focus indicator (visible only for keyboard users via :focus-visible) */
 a:focus-visible,

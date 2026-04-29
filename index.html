@@ -50,6 +50,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<!-- Motion One: Framer Motion's vanilla-JS engine (same author) -->
+<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.js"></script>
 </head>
 <body>
   <div class="topbar">
@@ -604,17 +606,77 @@ var PROJECTS = [
   });
 })();
 
-// ============ SCROLL REVEAL ============
+// ============ SCROLL REVEAL (Motion One — Framer Motion engine) ============
 (function(){
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if (e.isIntersecting) {
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      }
+  var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasMotion = window.Motion && window.Motion.animate && window.Motion.inView;
+
+  // Fallback if Motion failed to load or user prefers reduced motion
+  if (!hasMotion || prefersReduce) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+    return;
+  }
+
+  var animate = window.Motion.animate;
+  var inView = window.Motion.inView;
+  var stagger = window.Motion.stagger;
+
+  var ease = [0.22, 1, 0.36, 1];
+
+  // Hero entrance — runs immediately on load with stagger
+  var heroEls = document.querySelectorAll('.hero-prefix, .hero h1, .hero-role, .hero-desc, .hero-cta');
+  if (heroEls.length) {
+    heroEls.forEach(function(el){ el.style.opacity = '0'; });
+    animate(heroEls, { opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: stagger(0.08, { start: 0.1 }), easing: ease });
+  }
+
+  // Terminal slides in from right
+  var term = document.getElementById('terminal');
+  if (term) {
+    term.style.opacity = '0';
+    animate(term, { opacity: [0, 1], x: [30, 0] }, { duration: 0.8, delay: 0.3, easing: ease });
+  }
+
+  // Generic .reveal elements — fade + rise on scroll
+  inView('.reveal', function(info){
+    var el = info.target;
+    animate(el, { opacity: [0, 1], y: [24, 0] }, { duration: 0.6, easing: ease });
+    el.classList.add('in');
+    return function(){};
+  }, { margin: '0px 0px -40px 0px' });
+
+  // Stagger children of grouped sections (projects, skills, jobs, stats)
+  function staggerGroup(parentSelector, childSelector){
+    var parent = document.querySelector(parentSelector);
+    if (!parent) return;
+    var kids = parent.querySelectorAll(childSelector);
+    if (!kids.length) return;
+    // Pre-hide children immediately so they don't flash before scroll-in
+    kids.forEach(function(k){ k.style.opacity = '0'; k.style.transform = 'translateY(18px)'; });
+    inView(parent, function(){
+      animate(kids, { opacity: [0, 1], y: [18, 0] }, { duration: 0.55, delay: stagger(0.06), easing: ease });
+      return function(){};
+    }, { margin: '0px 0px -60px 0px', amount: 0.15 });
+  }
+  staggerGroup('#projectsGrid', '.project');
+  staggerGroup('#skillsGrid', '.skill');
+  staggerGroup('#timeline', '.job');
+  staggerGroup('.stats', '.stat');
+
+  // Subtle hover lift on project cards via Motion (alongside CSS hover)
+  document.querySelectorAll('.project').forEach(function(card){
+    card.addEventListener('mouseenter', function(){
+      animate(card, { scale: 1.015 }, { duration: 0.25, easing: ease });
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+    card.addEventListener('mouseleave', function(){
+      animate(card, { scale: 1 }, { duration: 0.25, easing: ease });
+    });
+  });
 })();
 
 // ============ ANIMATED STATS ============
