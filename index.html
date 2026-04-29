@@ -96,6 +96,43 @@
     </div>
   </div>
 
+  <!-- Resume preview modal -->
+  <div id="resumeModal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-backdrop" data-close="resume"></div>
+    <div class="modal-card resume-modal-card">
+      <div class="resume-modal-head">
+        <span class="resume-modal-title">Resume_Shubham_Singh.pdf</span>
+        <div class="resume-modal-actions">
+          <a href="assets/Shubham_Singh_Resume.pdf" download class="btn btn-primary btn-sm">
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </a>
+          <button class="modal-close" id="resumeClose" aria-label="Close">×</button>
+        </div>
+      </div>
+      <iframe id="resumeFrame" class="resume-frame" title="Resume preview" loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <!-- Scroll progress bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Floating back-to-top -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- Konami easter egg banner -->
+  <div class="konami-banner" id="konamiBanner" aria-hidden="true">
+    <div class="konami-card">
+      <div class="konami-glyph">⚡</div>
+      <div>
+        <div class="konami-title">DEVELOPER MODE UNLOCKED</div>
+        <div class="konami-sub">Nicely done. You found the konami code 🎮</div>
+      </div>
+    </div>
+  </div>
+
   <div class="topbar">
     <div class="topbar-dots">
       <div class="dot red"></div>
@@ -129,12 +166,18 @@
       <div class="hero-left">
         <div class="hero-prefix">System online · Ready for integration</div>
         <h1>Shubham <span class="accent">Singh</span><span class="cursor"></span></h1>
-        <div class="hero-role"><span class="tag">&lt;</span>LeadSoftwareEngineer<span class="tag">/&gt;</span></div>
+        <div class="hero-role">
+          <span class="tag">&lt;</span><span class="role-rotator" id="roleRotator"><span class="role-word">LeadSoftwareEngineer</span></span><span class="tag">/&gt;</span>
+        </div>
         <p class="hero-desc">I build the backbone of modern products, and the intelligence on top. 8+ years across monoliths and microservices, cloud-native on AWS &amp; GCP in <strong style="color:var(--text)">Ruby on Rails</strong>, <strong style="color:var(--text)">Node.js</strong>, <strong style="color:var(--text)">TypeScript</strong>, and <strong style="color:var(--text)">Python</strong>. Currently leading a team of 5 engineers shipping multi-tenant SaaS, fintech APIs, and AI-driven platforms with Amazon Bedrock and LangChain.</p>
         <div class="hero-cta">
-          <a href="assets/Shubham_Singh_Resume.pdf" download class="btn btn-primary">
+          <button type="button" class="btn btn-primary" id="resumePreviewBtn">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview Resume
+          </button>
+          <a href="assets/Shubham_Singh_Resume.pdf" download class="btn btn-ghost">
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Resume
+            Download
           </a>
           <a href="#contact" class="btn btn-ghost">
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -215,27 +258,22 @@
     <section id="code">
       <div class="section-header reveal">
         <span class="section-num">05</span>
-        <h2 class="section-title"><span class="bracket">{</span> code &amp; activity <span class="bracket">}</span></h2>
-        <span class="section-meta">// real code · live github</span>
+        <h2 class="section-title"><span class="bracket">{</span> activity <span class="bracket">}</span></h2>
+        <span class="section-meta">// live github</span>
       </div>
-      <div class="code-grid">
-        <div class="code-card reveal">
-          <div class="code-card-head">
-            <div class="code-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
-            <span class="code-card-title">resolve-ai/agent.ts</span>
-          </div>
-          <pre class="code-block"><code id="codeSnippet"></code></pre>
+      <div class="github-card reveal full-width">
+        <div class="code-card-head">
+          <div class="code-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+          <span class="code-card-title">github.com/shubhamsingh1295</span>
+          <a class="github-link" href="https://github.com/shubhamsingh1295" target="_blank" rel="noopener">view on github →</a>
         </div>
-        <div class="github-card reveal">
-          <div class="code-card-head">
-            <div class="code-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
-            <span class="code-card-title">github.com/shubhamsingh1295</span>
+        <div class="github-body">
+          <div class="github-stats-row">
+            <img class="github-stat-card" src="https://github-readme-stats.vercel.app/api?username=shubhamsingh1295&show_icons=true&theme=transparent&hide_border=true&title_color=00ff9d&icon_color=00ff9d&text_color=a0a0a0&hide_rank=false&include_all_commits=true&count_private=true" alt="Shubham Singh GitHub stats" loading="lazy" />
+            <img class="github-stat-card" src="https://github-readme-stats.vercel.app/api/top-langs/?username=shubhamsingh1295&layout=compact&theme=transparent&hide_border=true&title_color=00ff9d&text_color=a0a0a0&langs_count=8" alt="Top languages" loading="lazy" />
           </div>
-          <div class="github-body">
-            <div class="github-label">Contribution graph · last 12 months</div>
-            <img class="github-chart" src="https://ghchart.rshah.org/00ff88/shubhamsingh1295" alt="Shubham Singh GitHub contribution chart" loading="lazy" />
-            <a class="github-link" href="https://github.com/shubhamsingh1295" target="_blank" rel="noopener">view on github →</a>
-          </div>
+          <div class="github-label">Contribution graph · last 12 months</div>
+          <img class="github-chart" src="https://ghchart.rshah.org/00ff88/shubhamsingh1295" alt="Shubham Singh GitHub contribution chart" loading="lazy" />
         </div>
       </div>
     </section>
@@ -1021,40 +1059,154 @@ var PROJECTS = [
   });
 })();
 
-// ============ CODE SNIPPET TYPING ============
+// ============ HERO ROTATING TAGLINE ============
 (function(){
-  var el = document.getElementById('codeSnippet');
-  if (!el) return;
-  var snippet = [
-    '<span class="cc">// resolve-ai · agent loop (excerpt)</span>',
-    '<span class="ck">import</span> { <span class="cv">Agent</span>, <span class="cv">tools</span> } <span class="ck">from</span> <span class="cs">"@resolve/agent"</span>;',
-    '<span class="ck">import</span> { <span class="cv">openJiraTicket</span> } <span class="ck">from</span> <span class="cs">"./jira"</span>;',
-    '',
-    '<span class="ck">export async function</span> <span class="cf">resolveBug</span>(<span class="cv">ticketId</span>: <span class="cn">string</span>) {',
-    '  <span class="ck">const</span> ticket = <span class="ck">await</span> openJiraTicket(ticketId);',
-    '  <span class="ck">const</span> agent = <span class="ck">new</span> <span class="cv">Agent</span>({',
-    '    model: <span class="cs">"anthropic.claude-sonnet"</span>,',
-    '    tools: [tools.repoSearch, tools.runTests, tools.openPR],',
-    '    cache: <span class="cn">true</span>,',
-    '  });',
-    '',
-    '  <span class="ck">const</span> plan = <span class="ck">await</span> agent.<span class="cf">plan</span>(ticket);',
-    '  <span class="ck">const</span> diff = <span class="ck">await</span> agent.<span class="cf">apply</span>(plan);',
-    '  <span class="ck">return</span> agent.<span class="cf">openPR</span>({ diff, ticket });',
-    '}'
+  var rotator = document.getElementById('roleRotator');
+  if (!rotator) return;
+  var word = rotator.querySelector('.role-word');
+  var roles = [
+    'LeadSoftwareEngineer',
+    'BackendArchitect',
+    'AIEngineer',
+    'TeamLead',
+    'SaaSBuilder'
   ];
   var i = 0;
-  function step(){
-    if (i >= snippet.length) return;
-    el.innerHTML += (i ? '\n' : '') + snippet[i++];
-    setTimeout(step, 60);
+  function next(){
+    word.classList.remove('in');
+    word.classList.add('out');
+    setTimeout(function(){
+      i = (i + 1) % roles.length;
+      word.textContent = roles[i];
+      word.classList.remove('out');
+      word.classList.add('in');
+    }, 320);
   }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if (e.isIntersecting && !el.dataset.typed) { el.dataset.typed = '1'; step(); io.unobserve(el); }
-    });
-  }, { threshold: 0.3 });
-  io.observe(el);
+  word.classList.add('in');
+  setInterval(next, 2600);
+})();
+
+// ============ SCROLL PROGRESS BAR ============
+(function(){
+  var bar = document.getElementById('scrollProgress');
+  if (!bar) return;
+  var ticking = false;
+  function update(){
+    var h = document.documentElement;
+    var b = document.body;
+    var st = h.scrollTop || b.scrollTop;
+    var sh = (h.scrollHeight || b.scrollHeight) - h.clientHeight;
+    var pct = sh > 0 ? (st / sh) * 100 : 0;
+    bar.style.width = pct + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking) { requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+  update();
+})();
+
+// ============ BACK TO TOP ============
+(function(){
+  var btn = document.getElementById('backToTop');
+  if (!btn) return;
+  var ticking = false;
+  function update(){
+    var y = window.scrollY || document.documentElement.scrollTop;
+    btn.classList.toggle('visible', y > 600);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking) { requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+  btn.addEventListener('click', function(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+
+// ============ RESUME PREVIEW MODAL ============
+(function(){
+  var modal = document.getElementById('resumeModal');
+  var openBtn = document.getElementById('resumePreviewBtn');
+  var closeBtn = document.getElementById('resumeClose');
+  var frame = document.getElementById('resumeFrame');
+  if (!modal || !openBtn || !frame) return;
+  function open(){
+    if (!frame.src) frame.src = 'assets/Shubham_Singh_Resume.pdf';
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  openBtn.addEventListener('click', open);
+  closeBtn && closeBtn.addEventListener('click', close);
+  modal.querySelector('.modal-backdrop').addEventListener('click', close);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && modal.classList.contains('open')) close();
+  });
+})();
+
+// ============ CONSOLE EASTER EGG ============
+(function(){
+  if (!window.console || !console.log) return;
+  var titleStyle = 'color:#00ff9d;font-size:18px;font-weight:700;font-family:monospace;text-shadow:0 0 10px #00ff9d;';
+  var bodyStyle  = 'color:#a0a0a0;font-size:13px;font-family:monospace;line-height:1.7;';
+  var hlStyle    = 'color:#fafafa;font-size:13px;font-family:monospace;';
+  console.log('%c👋 Hey, fellow dev.', titleStyle);
+  console.log(
+    '%cInspecting the source? Respect.\n' +
+    'I\'m Shubham — Lead Software Engineer · 8+ years.\n' +
+    'Currently leading a team of 5 building AI agents, fintech APIs, and multi-tenant SaaS.\n' +
+    '\n' +
+    '%cIf you\'re hiring or want to chat:\n' +
+    '%c→ shubhamrordeveloper@gmail.com\n' +
+    '→ linkedin.com/in/shubhamsingh1295\n' +
+    '→ github.com/shubhamsingh1295\n' +
+    '\n' +
+    '%cTip: try ⌘K  or  ↑↑↓↓←→←→ B A',
+    bodyStyle, bodyStyle, hlStyle, bodyStyle
+  );
+})();
+
+// ============ KONAMI CODE EASTER EGG ============
+(function(){
+  var seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  var pos = 0;
+  var banner = document.getElementById('konamiBanner');
+  document.addEventListener('keydown', function(e){
+    var key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (key === seq[pos]) {
+      pos++;
+      if (pos === seq.length) {
+        pos = 0;
+        trigger();
+      }
+    } else {
+      pos = (key === seq[0]) ? 1 : 0;
+    }
+  });
+  function trigger(){
+    document.body.classList.add('konami-active');
+    if (banner) {
+      banner.classList.add('show');
+      setTimeout(function(){ banner.classList.remove('show'); }, 4000);
+    }
+    // Confetti-ish flash on accent
+    var root = document.documentElement;
+    root.style.setProperty('--accent', '#ff00aa');
+    root.style.setProperty('--accent-line', 'rgba(255,0,170,0.4)');
+    root.style.setProperty('--accent-dim', 'rgba(255,0,170,0.15)');
+    setTimeout(function(){
+      root.style.removeProperty('--accent');
+      root.style.removeProperty('--accent-line');
+      root.style.removeProperty('--accent-dim');
+    }, 3500);
+    if (window.console) console.log('%c⚡ Konami code activated!', 'color:#ff00aa;font-size:16px;font-weight:700;');
+  }
 })();
 
 // ============ COMMAND PALETTE (Cmd+K / Ctrl+K) ============
