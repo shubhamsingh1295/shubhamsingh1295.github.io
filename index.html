@@ -54,6 +54,48 @@
 <script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.js"></script>
 </head>
 <body>
+  <!-- Boot sequence (shown once on first load) -->
+  <div id="boot" class="boot">
+    <div class="boot-inner">
+      <div class="boot-line"><span class="boot-prompt">$</span> <span id="bootText">initializing...</span><span class="boot-cursor"></span></div>
+    </div>
+  </div>
+
+  <!-- Premium texture layers -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="mesh-bg" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+  <div class="cursor-glow" aria-hidden="true"></div>
+
+  <!-- Cmd+K command palette -->
+  <div id="palette" class="palette" role="dialog" aria-hidden="true" aria-label="Command palette">
+    <div class="palette-card">
+      <div class="palette-input-wrap">
+        <span class="palette-icon">⌘</span>
+        <input id="paletteInput" type="text" placeholder="Jump to section, project, or skill..." autocomplete="off" />
+        <kbd class="palette-kbd">ESC</kbd>
+      </div>
+      <div id="paletteResults" class="palette-results"></div>
+      <div class="palette-foot">
+        <span><kbd>↑↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project detail modal -->
+  <div id="projectModal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
   <div class="topbar">
     <div class="topbar-dots">
       <div class="dot red"></div>
@@ -66,10 +108,14 @@
       <a href="#skills" class="tab" data-tab="skills">stack.json</a>
       <a href="#experience" class="tab" data-tab="experience">experience.log</a>
       <a href="#projects" class="tab" data-tab="projects">projects/</a>
+      <a href="#code" class="tab" data-tab="code">code.diff</a>
       <a href="#education" class="tab" data-tab="education">education.yml</a>
       <a href="#contact" class="tab" data-tab="contact">contact.sh</a>
     </div>
     <div class="topbar-right">
+      <button class="cmdk-hint" id="cmdkBtn" aria-label="Open command palette" title="Search · Cmd+K">
+        <span>Search</span><kbd>⌘K</kbd>
+      </button>
       <div class="status-indicator">
         <span class="pulse"></span>
         <span>Open to opportunities</span>
@@ -161,14 +207,42 @@
       <div class="section-header reveal">
         <span class="section-num">04</span>
         <h2 class="section-title"><span class="bracket">{</span> featured projects <span class="bracket">}</span></h2>
-        <span class="section-meta">// ls -la ./projects</span>
+        <span class="section-meta">// ls -la ./projects · click to expand</span>
       </div>
       <div class="projects-grid reveal" id="projectsGrid"></div>
     </section>
 
-    <section id="education">
+    <section id="code">
       <div class="section-header reveal">
         <span class="section-num">05</span>
+        <h2 class="section-title"><span class="bracket">{</span> code &amp; activity <span class="bracket">}</span></h2>
+        <span class="section-meta">// real code · live github</span>
+      </div>
+      <div class="code-grid">
+        <div class="code-card reveal">
+          <div class="code-card-head">
+            <div class="code-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+            <span class="code-card-title">resolve-ai/agent.ts</span>
+          </div>
+          <pre class="code-block"><code id="codeSnippet"></code></pre>
+        </div>
+        <div class="github-card reveal">
+          <div class="code-card-head">
+            <div class="code-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+            <span class="code-card-title">github.com/shubhamsingh1295</span>
+          </div>
+          <div class="github-body">
+            <div class="github-label">Contribution graph · last 12 months</div>
+            <img class="github-chart" src="https://ghchart.rshah.org/00ff88/shubhamsingh1295" alt="Shubham Singh GitHub contribution chart" loading="lazy" />
+            <a class="github-link" href="https://github.com/shubhamsingh1295" target="_blank" rel="noopener">view on github →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="education">
+      <div class="section-header reveal">
+        <span class="section-num">06</span>
         <h2 class="section-title"><span class="bracket">{</span> credentials <span class="bracket">}</span></h2>
         <span class="section-meta">// education &amp; certifications</span>
       </div>
@@ -247,55 +321,56 @@
 
 <script>
 // ============ DATA ============
+var DEV = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/';
 var SKILLS = [
-  { name: 'Ruby', icon: 'Rb', cat: 'Languages' },
-  { name: 'JavaScript', icon: 'JS', cat: 'Languages' },
-  { name: 'TypeScript', icon: 'TS', cat: 'Languages' },
-  { name: 'Python', icon: 'Py', cat: 'Languages' },
-  { name: 'Ruby on Rails', icon: 'RoR', cat: 'Frameworks' },
-  { name: 'Express.js', icon: 'Ex', cat: 'Frameworks' },
-  { name: 'Fastify', icon: 'Ft', cat: 'Frameworks' },
-  { name: 'Next.js', icon: 'Nx', cat: 'Frameworks' },
-  { name: 'Flask', icon: 'Fl', cat: 'Frameworks' },
-  { name: 'FastAPI', icon: 'FA', cat: 'Frameworks' },
-  { name: 'Prisma', icon: 'Pr', cat: 'Libraries' },
+  { name: 'Ruby', icon: 'Rb', logo: DEV+'ruby/ruby-original.svg', cat: 'Languages' },
+  { name: 'JavaScript', icon: 'JS', logo: DEV+'javascript/javascript-original.svg', cat: 'Languages' },
+  { name: 'TypeScript', icon: 'TS', logo: DEV+'typescript/typescript-original.svg', cat: 'Languages' },
+  { name: 'Python', icon: 'Py', logo: DEV+'python/python-original.svg', cat: 'Languages' },
+  { name: 'Ruby on Rails', icon: 'RoR', logo: DEV+'rails/rails-plain.svg', cat: 'Frameworks' },
+  { name: 'Express.js', icon: 'Ex', logo: DEV+'express/express-original.svg', cat: 'Frameworks' },
+  { name: 'Fastify', icon: 'Ft', logo: DEV+'fastify/fastify-original.svg', cat: 'Frameworks' },
+  { name: 'Next.js', icon: 'Nx', logo: DEV+'nextjs/nextjs-original.svg', cat: 'Frameworks' },
+  { name: 'Flask', icon: 'Fl', logo: DEV+'flask/flask-original.svg', cat: 'Frameworks' },
+  { name: 'FastAPI', icon: 'FA', logo: DEV+'fastapi/fastapi-original.svg', cat: 'Frameworks' },
+  { name: 'Prisma', icon: 'Pr', logo: DEV+'prisma/prisma-original.svg', cat: 'Libraries' },
   { name: 'Drizzle ORM', icon: 'Dz', cat: 'Libraries' },
   { name: 'Mongoose', icon: 'Mg', cat: 'Libraries' },
-  { name: 'Sequelize', icon: 'Sq', cat: 'Libraries' },
+  { name: 'Sequelize', icon: 'Sq', logo: DEV+'sequelize/sequelize-original.svg', cat: 'Libraries' },
   { name: 'Knex.js', icon: 'Kx', cat: 'Libraries' },
   { name: 'LangChain', icon: 'LC', cat: 'Libraries' },
-  { name: 'PostgreSQL', icon: 'Pg', cat: 'Databases' },
-  { name: 'MySQL', icon: 'My', cat: 'Databases' },
-  { name: 'MongoDB', icon: 'Mo', cat: 'Databases' },
+  { name: 'PostgreSQL', icon: 'Pg', logo: DEV+'postgresql/postgresql-original.svg', cat: 'Databases' },
+  { name: 'MySQL', icon: 'My', logo: DEV+'mysql/mysql-original.svg', cat: 'Databases' },
+  { name: 'MongoDB', icon: 'Mo', logo: DEV+'mongodb/mongodb-original.svg', cat: 'Databases' },
   { name: 'DynamoDB', icon: 'Dy', cat: 'Databases' },
-  { name: 'Redis', icon: 'Rd', cat: 'Databases' },
-  { name: 'AWS ECS', icon: 'EC', cat: 'Cloud' },
-  { name: 'AWS Lambda', icon: 'Lm', cat: 'Cloud' },
-  { name: 'AWS S3', icon: 'S3', cat: 'Cloud' },
-  { name: 'AWS RDS', icon: 'RD', cat: 'Cloud' },
-  { name: 'AWS SQS/SNS', icon: 'SQ', cat: 'Cloud' },
-  { name: 'CloudWatch', icon: 'CW', cat: 'Cloud' },
-  { name: 'Cognito', icon: 'Cg', cat: 'Cloud' },
-  { name: 'GCP Cloud Run', icon: 'CR', cat: 'Cloud' },
-  { name: 'GCP Pub/Sub', icon: 'PS', cat: 'Cloud' },
-  { name: 'GKE', icon: 'GK', cat: 'Cloud' },
-  { name: 'Git', icon: 'Gt', cat: 'DevOps' },
-  { name: 'Docker', icon: 'Dk', cat: 'DevOps' },
-  { name: 'Terraform', icon: 'Tf', cat: 'DevOps' },
+  { name: 'Redis', icon: 'Rd', logo: DEV+'redis/redis-original.svg', cat: 'Databases' },
+  { name: 'AWS ECS', icon: 'EC', logo: DEV+'amazonwebservices/amazonwebservices-original-wordmark.svg', cat: 'Cloud' },
+  { name: 'AWS Lambda', icon: 'Lm', logo: DEV+'amazonwebservices/amazonwebservices-original-wordmark.svg', cat: 'Cloud' },
+  { name: 'AWS S3', icon: 'S3', logo: DEV+'amazonwebservices/amazonwebservices-original-wordmark.svg', cat: 'Cloud' },
+  { name: 'AWS RDS', icon: 'RD', logo: DEV+'amazonwebservices/amazonwebservices-original-wordmark.svg', cat: 'Cloud' },
+  { name: 'AWS SQS/SNS', icon: 'SQ', logo: DEV+'amazonwebservices/amazonwebservices-original-wordmark.svg', cat: 'Cloud' },
+  { name: 'CloudWatch', icon: 'CW', logo: DEV+'amazonwebservices/amazonwebservices-original-wordmark.svg', cat: 'Cloud' },
+  { name: 'Cognito', icon: 'Cg', logo: DEV+'amazonwebservices/amazonwebservices-original-wordmark.svg', cat: 'Cloud' },
+  { name: 'GCP Cloud Run', icon: 'CR', logo: DEV+'googlecloud/googlecloud-original.svg', cat: 'Cloud' },
+  { name: 'GCP Pub/Sub', icon: 'PS', logo: DEV+'googlecloud/googlecloud-original.svg', cat: 'Cloud' },
+  { name: 'GKE', icon: 'GK', logo: DEV+'kubernetes/kubernetes-plain.svg', cat: 'Cloud' },
+  { name: 'Git', icon: 'Gt', logo: DEV+'git/git-original.svg', cat: 'DevOps' },
+  { name: 'Docker', icon: 'Dk', logo: DEV+'docker/docker-original.svg', cat: 'DevOps' },
+  { name: 'Terraform', icon: 'Tf', logo: DEV+'terraform/terraform-original.svg', cat: 'DevOps' },
   { name: 'OpenTofu', icon: 'OT', cat: 'DevOps' },
-  { name: 'GitHub Actions', icon: 'GA', cat: 'DevOps' },
-  { name: 'JIRA', icon: 'Jr', cat: 'DevOps' },
+  { name: 'GitHub Actions', icon: 'GA', logo: DEV+'github/github-original.svg', cat: 'DevOps' },
+  { name: 'JIRA', icon: 'Jr', logo: DEV+'jira/jira-original.svg', cat: 'DevOps' },
   { name: 'Agile / Scrum', icon: 'Ag', cat: 'DevOps' },
   { name: 'RSpec', icon: 'Rs', cat: 'Testing' },
   { name: 'MiniTest', icon: 'Mt', cat: 'Testing' },
-  { name: 'Jest', icon: 'Je', cat: 'Testing' },
+  { name: 'Jest', icon: 'Je', logo: DEV+'jest/jest-plain.svg', cat: 'Testing' },
   { name: 'Playwright', icon: 'Pw', cat: 'Testing' },
   { name: 'Amazon Bedrock', icon: 'Br', cat: 'AI/ML' },
   { name: 'LangChain', icon: 'LC', cat: 'AI/ML' },
   { name: 'Bedrock Agents', icon: 'BA', cat: 'AI/ML' },
   { name: 'Chatbots', icon: 'Cb', cat: 'AI/ML' },
   { name: 'Recommendations', icon: 'Rc', cat: 'AI/ML' },
-  { name: 'HTML / CSS', icon: 'Ht', cat: 'Web' },
+  { name: 'HTML / CSS', icon: 'Ht', logo: DEV+'html5/html5-original.svg', cat: 'Web' },
   { name: 'REST APIs', icon: 'RE', cat: 'Web' },
   { name: 'OpenAPI', icon: 'OA', cat: 'Web' },
   { name: 'WebRTC', icon: 'WR', cat: 'Web' },
@@ -391,14 +466,118 @@ var VIS = {
 };
 
 var PROJECTS = [
-  { title: 'Resolve AI · Agentic Bug Fixer', status: 'SHIPPED', visual: VIS.agent, desc: 'Multi-tenant SaaS where AI agents resolve Jira bug tickets end-to-end by analyzing context, generating code, and raising GitHub pull requests.', impact: 'Autonomous engineering workflow at SaaS scale', tech: ['Node.js', 'TypeScript', 'Fastify', 'React 19', 'Drizzle', 'AWS Lambda'] },
-  { title: 'IDCPM · Identity & Consent', status: 'SHIPPED', visual: VIS.auth, desc: 'Enterprise identity and consent preference platform with OAuth2/OIDC via ORY Hydra, Next.js 15 frontend, Fastify backend, and GKE deployment.', impact: 'Enterprise SSO across products & partners', tech: ['ORY Hydra', 'Next.js 15', 'Fastify', 'GCP Pub/Sub', 'GKE', 'OpenTofu'] },
-  { title: 'ViaPromeds · Healthcare SaaS', status: 'SHIPPED', visual: VIS.health, desc: 'Full-stack healthcare platform with patient records, video consultations, face detection, and integrated payments via PayPal and Authorize.net.', impact: 'End-to-end healthcare delivery platform', tech: ['Next.js 13', 'Node.js', 'Sequelize', 'AWS Lambda', 'Contentful'] },
-  { title: 'Remit2any · Fintech API', status: 'SHIPPED', visual: VIS.fintech, desc: 'Fintech API platform with 100+ production endpoints across transfers, payments, wallets, and compliance, documented with OpenAPI 3.0.', impact: '100+ endpoints, domain-driven structure', tech: ['Node.js', 'TypeScript', 'OpenAPI 3.0', 'PostgreSQL'] },
-  { title: 'TheraBody GenAI', status: 'SHIPPED', visual: VIS.ai, desc: 'AI-powered product chatbot and recommendation engine using Amazon Bedrock and LangChain, with Python/Streamlit interface and serverless backend.', impact: 'Conversational product discovery', tech: ['Amazon Bedrock', 'LangChain', 'Python', 'Streamlit', 'AWS SAM'] },
-  { title: 'Westfield CMS Migration', status: 'SHIPPED', visual: VIS.grid, desc: "Led the migration of Westfield's content management system from a Ruby on Rails monolith to a Node.js and TypeScript microservices architecture.", impact: 'Improved performance & scalability across platforms', tech: ['Node.js', 'TypeScript', 'Rails', 'Microservices', 'AWS'] },
-  { title: 'ETL Pipelines · Apache Beam', status: 'PROD', visual: VIS.pipe, desc: 'Built data ingestion pipelines with Apache Beam to process product catalogs and push them into GCP buckets and BigQuery for analytics.', impact: 'Scalable batch + streaming ingestion', tech: ['Apache Beam', 'GCP', 'BigQuery', 'Python'] },
-  { title: 'Event Sourcing Platform', status: 'PROD', visual: VIS.evt, desc: 'Developed smart parking and event-sourcing platforms for real-time visitor behavior tracking across Westfield properties.', impact: 'Real-time tracking at venue scale', tech: ['Event Sourcing', 'Node.js', 'DynamoDB', 'SQS'] }
+  {
+    title: 'Resolve AI · Agentic Bug Fixer', status: 'SHIPPED', visual: VIS.agent,
+    desc: 'Multi-tenant SaaS where AI agents resolve Jira bug tickets end-to-end by analyzing context, generating code, and raising GitHub pull requests.',
+    impact: 'Autonomous engineering workflow at SaaS scale',
+    tech: ['Node.js', 'TypeScript', 'Fastify', 'React 19', 'Drizzle', 'AWS Lambda'],
+    role: 'Lead Engineer',
+    overview: 'A first-of-its-kind agentic platform where AI engineers reason about open bugs, traverse code, propose changes, and raise pull requests for human review — closing the loop from ticket to merge.',
+    highlights: [
+      'Designed multi-tenant data isolation with Drizzle ORM and Postgres row-level security',
+      'Event-driven architecture using AWS Lambda, ECS workers, and queues for parallel agent runs',
+      'Pluggable LLM provider layer (Bedrock + others) with prompt caching and cost guards',
+      'React 19 admin console with optimistic UI for ticket and PR review'
+    ]
+  },
+  {
+    title: 'IDCPM · Identity & Consent', status: 'SHIPPED', visual: VIS.auth,
+    desc: 'Enterprise identity and consent preference platform with OAuth2/OIDC via ORY Hydra, Next.js 15 frontend, Fastify backend, and GKE deployment.',
+    impact: 'Enterprise SSO across products & partners',
+    tech: ['ORY Hydra', 'Next.js 15', 'Fastify', 'GCP Pub/Sub', 'GKE', 'OpenTofu'],
+    role: 'Lead Engineer',
+    overview: 'Centralized identity, consent, and preference management for the full product portfolio. Standardizes OAuth2/OIDC, federates partners, and propagates consent changes via Pub/Sub.',
+    highlights: [
+      'OAuth2/OIDC IdP backed by ORY Hydra with custom login & consent flows',
+      'Webhook fan-out via GCP Pub/Sub for downstream consent sync',
+      'Infrastructure as code with OpenTofu and Terragrunt deployed to GKE',
+      'Pino structured logging with request correlation across services'
+    ]
+  },
+  {
+    title: 'ViaPromeds · Healthcare SaaS', status: 'SHIPPED', visual: VIS.health,
+    desc: 'Full-stack healthcare platform with patient records, video consultations, face detection, and integrated payments via PayPal and Authorize.net.',
+    impact: 'End-to-end healthcare delivery platform',
+    tech: ['Next.js 13', 'Node.js', 'Sequelize', 'AWS Lambda', 'Contentful'],
+    role: 'Tech Lead',
+    overview: 'Customer-facing site, admin dashboard, video consultation, and payments — built as a cohesive Next.js + Node.js platform with AWS serverless edges.',
+    highlights: [
+      'Next.js 13 marketing site with Contentful CMS-driven content',
+      'Admin dashboard with role-based access and audit trails',
+      'Payment integration supporting PayPal and Authorize.net',
+      'Face detection and video consult flows for telehealth use cases'
+    ]
+  },
+  {
+    title: 'Remit2any · Fintech API', status: 'SHIPPED', visual: VIS.fintech,
+    desc: 'Fintech API platform with 100+ production endpoints across transfers, payments, wallets, and compliance, documented with OpenAPI 3.0.',
+    impact: '100+ endpoints · domain-driven structure',
+    tech: ['Node.js', 'TypeScript', 'OpenAPI 3.0', 'PostgreSQL'],
+    role: 'API Architect',
+    overview: 'Contract-first fintech API surface designed for clarity and extensibility. 13 business domains, mock layer for frictionless onboarding, and OpenAPI as the source of truth.',
+    highlights: [
+      'OpenAPI 3.0 spec drives generated types, client SDKs, and docs',
+      'Domain-driven layout: transfers, payments, wallets, compliance, KYC',
+      'Stripe-quality reference docs with code samples in multiple languages',
+      'Mock-data system for fast prototyping before real backend wiring'
+    ]
+  },
+  {
+    title: 'TheraBody GenAI', status: 'SHIPPED', visual: VIS.ai,
+    desc: 'AI-powered product chatbot and recommendation engine using Amazon Bedrock and LangChain, with Python/Streamlit interface and serverless backend.',
+    impact: 'Conversational product discovery',
+    tech: ['Amazon Bedrock', 'LangChain', 'Python', 'Streamlit', 'AWS SAM'],
+    role: 'AI Engineer',
+    overview: 'Built two coordinated systems: a Streamlit-based chatbot that answers product questions using a curated knowledge base, and a serverless recommendation engine on AWS Bedrock Agent Runtime.',
+    highlights: [
+      'LangChain RAG with MongoDB-backed knowledge corpus and spaCy NER',
+      'AWS SAM serverless API for low-cost recommendation inference',
+      'Bedrock foundation models for grounded responses with citations',
+      'Streamlit UI for rapid stakeholder review and iteration'
+    ]
+  },
+  {
+    title: 'Westfield CMS Migration', status: 'SHIPPED', visual: VIS.grid,
+    desc: "Led the migration of Westfield's content management system from a Ruby on Rails monolith to a Node.js and TypeScript microservices architecture.",
+    impact: 'Improved performance & scalability across platforms',
+    tech: ['Node.js', 'TypeScript', 'Rails', 'Microservices', 'AWS'],
+    role: 'Senior Engineer',
+    overview: 'A multi-quarter migration off Rails into a modern microservices stack — content, search, user, and partner concerns split into independently deployable services on AWS.',
+    highlights: [
+      'Strangler-fig migration pattern; zero downtime cutover',
+      'TypeScript service template with shared logging, config, and observability',
+      'Centralized auth and partner-API integrations',
+      'Performance and scalability gains across mall-facing platforms'
+    ]
+  },
+  {
+    title: 'ETL Pipelines · Apache Beam', status: 'PROD', visual: VIS.pipe,
+    desc: 'Built data ingestion pipelines with Apache Beam to process product catalogs and push them into GCP buckets and BigQuery for analytics.',
+    impact: 'Scalable batch + streaming ingestion',
+    tech: ['Apache Beam', 'GCP', 'BigQuery', 'Python'],
+    role: 'Data Engineer',
+    overview: 'Unified batch and streaming ingestion of product catalog data into a single pipeline that lands curated datasets in GCS and BigQuery for analytics teams.',
+    highlights: [
+      'Single Beam codebase running both batch and streaming jobs',
+      'Schema-validated landing zone in GCS with BigQuery external tables',
+      'Cost-tuned with windowing and side-inputs for joins',
+      'Hand-offs to marketing analytics with documented contracts'
+    ]
+  },
+  {
+    title: 'Event Sourcing Platform', status: 'PROD', visual: VIS.evt,
+    desc: 'Developed smart parking and event-sourcing platforms for real-time visitor behavior tracking across Westfield properties.',
+    impact: 'Real-time tracking at venue scale',
+    tech: ['Event Sourcing', 'Node.js', 'DynamoDB', 'SQS'],
+    role: 'Senior Engineer',
+    overview: 'An append-only event log capturing visitor movements (arrival, parking, store entry, dwell, payments). Powers analytics and operational dashboards in near real-time.',
+    highlights: [
+      'Event sourcing with DynamoDB-backed log; SQS for fan-out',
+      'Projections for occupancy, dwell time, and zone heat-maps',
+      'Smart parking integration with vehicle plate events',
+      'Backpressure-safe ingestion at venue-scale traffic'
+    ]
+  }
 ];
 
 // ============ THEME ============
@@ -560,7 +739,10 @@ var PROJECTS = [
       if (active !== 'All' && s.cat !== active) return;
       var el = document.createElement('div');
       el.className = 'skill';
-      el.innerHTML = '<div class="skill-icon">' + s.icon + '</div><span>' + s.name + '</span><span class="skill-category">' + s.cat + '</span>';
+      var iconHtml = s.logo
+        ? '<div class="skill-logo"><img src="' + s.logo + '" alt="' + s.name + '" loading="lazy" onerror="this.parentNode.outerHTML=\'<div class=\\\'skill-icon\\\'>' + s.icon + '</div>\'" /></div>'
+        : '<div class="skill-icon">' + s.icon + '</div>';
+      el.innerHTML = iconHtml + '<span>' + s.name + '</span><span class="skill-category">' + s.cat + '</span>';
       gridEl.appendChild(el);
     });
   }
@@ -592,6 +774,7 @@ var PROJECTS = [
   PROJECTS.forEach(function(p, i){
     var card = document.createElement('div');
     card.className = 'project';
+    card.dataset.idx = i;
     card.style.transitionDelay = (i * 60) + 'ms';
     var techHtml = p.tech.map(function(t){ return '<span class="tech-tag">' + t + '</span>'; }).join('');
     card.innerHTML =
@@ -668,15 +851,6 @@ var PROJECTS = [
   staggerGroup('#timeline', '.job');
   staggerGroup('.stats', '.stat');
 
-  // Subtle hover lift on project cards via Motion (alongside CSS hover)
-  document.querySelectorAll('.project').forEach(function(card){
-    card.addEventListener('mouseenter', function(){
-      animate(card, { scale: 1.015 }, { duration: 0.25, easing: ease });
-    });
-    card.addEventListener('mouseleave', function(){
-      animate(card, { scale: 1 }, { duration: 0.25, easing: ease });
-    });
-  });
 })();
 
 // ============ ANIMATED STATS ============
@@ -727,6 +901,322 @@ var PROJECTS = [
 (function(){
   var y = document.getElementById('footerYear');
   if (y) y.textContent = new Date().getFullYear();
+})();
+
+// ============ BOOT SEQUENCE (first load) ============
+(function(){
+  var boot = document.getElementById('boot');
+  var bootText = document.getElementById('bootText');
+  if (!boot || !bootText) return;
+  // Skip on small screens or if user opted in to a fast-load before
+  var seen = sessionStorage.getItem('booted');
+  if (seen) { boot.classList.add('done'); setTimeout(function(){ boot.style.display = 'none'; }, 50); return; }
+  var lines = [
+    'mounting filesystem...',
+    'loading skills.json...',
+    'connecting to motion engine...',
+    'compiling /portfolio/v8...',
+    'ready.'
+  ];
+  var i = 0;
+  function next(){
+    if (i >= lines.length) {
+      sessionStorage.setItem('booted', '1');
+      setTimeout(function(){
+        boot.classList.add('done');
+        setTimeout(function(){ boot.style.display = 'none'; }, 500);
+      }, 220);
+      return;
+    }
+    bootText.textContent = lines[i++];
+    setTimeout(next, 220);
+  }
+  setTimeout(next, 100);
+})();
+
+// ============ CURSOR SPOTLIGHT ============
+(function(){
+  var glow = document.querySelector('.cursor-glow');
+  if (!glow) return;
+  var hasFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+  if (!hasFinePointer) return;
+  var x = window.innerWidth / 2, y = window.innerHeight / 2;
+  var tx = x, ty = y;
+  function tick(){
+    tx += (x - tx) * 0.18;
+    ty += (y - ty) * 0.18;
+    glow.style.transform = 'translate(' + tx + 'px,' + ty + 'px) translate(-50%, -50%)';
+    requestAnimationFrame(tick);
+  }
+  document.addEventListener('mousemove', function(e){
+    x = e.clientX; y = e.clientY;
+    glow.classList.add('active');
+  });
+  document.addEventListener('mouseleave', function(){ glow.classList.remove('active'); });
+  tick();
+})();
+
+// ============ 3D TILT + SHINE ON PROJECT CARDS ============
+(function(){
+  var hasFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+  if (!hasFinePointer) return;
+  document.querySelectorAll('.project').forEach(function(card){
+    var raf = null;
+    function onMove(e){
+      var rect = card.getBoundingClientRect();
+      var px = (e.clientX - rect.left) / rect.width;
+      var py = (e.clientY - rect.top) / rect.height;
+      var rx = (py - 0.5) * -8;  // tilt up/down
+      var ry = (px - 0.5) * 10;  // tilt left/right
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(function(){
+        card.style.transform = 'perspective(900px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-4px)';
+        card.style.setProperty('--mx', (px * 100) + '%');
+        card.style.setProperty('--my', (py * 100) + '%');
+      });
+    }
+    function reset(){
+      if (raf) cancelAnimationFrame(raf);
+      card.style.transform = '';
+    }
+    card.addEventListener('mousemove', onMove);
+    card.addEventListener('mouseleave', reset);
+  });
+})();
+
+// ============ MAGNETIC CTA BUTTONS ============
+(function(){
+  var hasFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+  if (!hasFinePointer) return;
+  var targets = document.querySelectorAll('.btn-primary, .icon-btn');
+  targets.forEach(function(btn){
+    btn.classList.add('magnetic');
+    btn.addEventListener('mousemove', function(e){
+      var rect = btn.getBoundingClientRect();
+      var dx = e.clientX - (rect.left + rect.width / 2);
+      var dy = e.clientY - (rect.top + rect.height / 2);
+      var strength = 0.25;
+      btn.style.transform = 'translate(' + (dx * strength) + 'px,' + (dy * strength) + 'px)';
+    });
+    btn.addEventListener('mouseleave', function(){
+      btn.style.transform = '';
+    });
+  });
+})();
+
+// ============ SMOOTH SCROLL ON TAB / ANCHOR CLICKS ============
+(function(){
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href');
+      if (href.length < 2) return;
+      var target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      var offset = 56; // topbar height + padding
+      var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+      history.replaceState(null, '', href);
+    });
+  });
+})();
+
+// ============ CODE SNIPPET TYPING ============
+(function(){
+  var el = document.getElementById('codeSnippet');
+  if (!el) return;
+  var snippet = [
+    '<span class="cc">// resolve-ai · agent loop (excerpt)</span>',
+    '<span class="ck">import</span> { <span class="cv">Agent</span>, <span class="cv">tools</span> } <span class="ck">from</span> <span class="cs">"@resolve/agent"</span>;',
+    '<span class="ck">import</span> { <span class="cv">openJiraTicket</span> } <span class="ck">from</span> <span class="cs">"./jira"</span>;',
+    '',
+    '<span class="ck">export async function</span> <span class="cf">resolveBug</span>(<span class="cv">ticketId</span>: <span class="cn">string</span>) {',
+    '  <span class="ck">const</span> ticket = <span class="ck">await</span> openJiraTicket(ticketId);',
+    '  <span class="ck">const</span> agent = <span class="ck">new</span> <span class="cv">Agent</span>({',
+    '    model: <span class="cs">"anthropic.claude-sonnet"</span>,',
+    '    tools: [tools.repoSearch, tools.runTests, tools.openPR],',
+    '    cache: <span class="cn">true</span>,',
+    '  });',
+    '',
+    '  <span class="ck">const</span> plan = <span class="ck">await</span> agent.<span class="cf">plan</span>(ticket);',
+    '  <span class="ck">const</span> diff = <span class="ck">await</span> agent.<span class="cf">apply</span>(plan);',
+    '  <span class="ck">return</span> agent.<span class="cf">openPR</span>({ diff, ticket });',
+    '}'
+  ];
+  var i = 0;
+  function step(){
+    if (i >= snippet.length) return;
+    el.innerHTML += (i ? '\n' : '') + snippet[i++];
+    setTimeout(step, 60);
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting && !el.dataset.typed) { el.dataset.typed = '1'; step(); io.unobserve(el); }
+    });
+  }, { threshold: 0.3 });
+  io.observe(el);
+})();
+
+// ============ COMMAND PALETTE (Cmd+K / Ctrl+K) ============
+(function(){
+  var palette = document.getElementById('palette');
+  var input = document.getElementById('paletteInput');
+  var results = document.getElementById('paletteResults');
+  var openBtn = document.getElementById('cmdkBtn');
+  if (!palette || !input || !results) return;
+
+  var items = [
+    { label: 'Hero', tag: 'section', target: '#hero' },
+    { label: 'About', tag: 'section', target: '#about' },
+    { label: 'Tech Stack', tag: 'section', target: '#skills' },
+    { label: 'Experience', tag: 'section', target: '#experience' },
+    { label: 'Featured Projects', tag: 'section', target: '#projects' },
+    { label: 'Code & Activity', tag: 'section', target: '#code' },
+    { label: 'Education & Certifications', tag: 'section', target: '#education' },
+    { label: 'Contact', tag: 'section', target: '#contact' },
+    { label: 'Download Resume (PDF)', tag: 'action', target: 'assets/Shubham_Singh_Resume.pdf', download: true },
+    { label: 'Open LinkedIn', tag: 'link', target: 'https://www.linkedin.com/in/shubhamsingh1295/' },
+    { label: 'Open GitHub', tag: 'link', target: 'https://github.com/shubhamsingh1295' },
+    { label: 'Email me', tag: 'link', target: 'mailto:shubhamrordeveloper@gmail.com' }
+  ];
+  PROJECTS.forEach(function(p, idx){
+    items.push({ label: p.title, tag: 'project', target: idx });
+  });
+  SKILLS.forEach(function(s){
+    items.push({ label: s.name, tag: 'skill', target: '#skills', skill: s.cat });
+  });
+
+  var active = 0;
+  var filtered = items.slice();
+
+  function score(item, q){
+    if (!q) return 1;
+    var l = item.label.toLowerCase();
+    if (l.indexOf(q) === 0) return 100;
+    if (l.indexOf(q) > -1) return 50;
+    return 0;
+  }
+  function render(){
+    if (!filtered.length) {
+      results.innerHTML = '<div class="palette-empty">No matches. Try "projects", "skills", or "contact".</div>';
+      return;
+    }
+    results.innerHTML = filtered.map(function(it, i){
+      return '<div class="palette-item' + (i === active ? ' active' : '') + '" data-i="' + i + '">' +
+        '<span class="pi-tag">' + it.tag + '</span>' +
+        '<span>' + it.label + '</span>' +
+        '<span class="pi-shortcut">↵</span>' +
+      '</div>';
+    }).join('');
+    Array.prototype.forEach.call(results.querySelectorAll('.palette-item'), function(el){
+      el.addEventListener('click', function(){ active = parseInt(el.dataset.i, 10); choose(); });
+      el.addEventListener('mouseenter', function(){ active = parseInt(el.dataset.i, 10); render(); });
+    });
+  }
+  function open(){
+    palette.classList.add('open');
+    palette.setAttribute('aria-hidden', 'false');
+    input.value = '';
+    filtered = items.slice();
+    active = 0;
+    render();
+    setTimeout(function(){ input.focus(); }, 30);
+  }
+  function close(){
+    palette.classList.remove('open');
+    palette.setAttribute('aria-hidden', 'true');
+  }
+  function choose(){
+    var it = filtered[active];
+    if (!it) return;
+    close();
+    if (it.tag === 'project' && typeof it.target === 'number') {
+      // open project modal
+      window.openProjectModal && window.openProjectModal(it.target);
+      return;
+    }
+    if (it.download) {
+      var a = document.createElement('a');
+      a.href = it.target; a.download = ''; document.body.appendChild(a); a.click(); a.remove();
+      return;
+    }
+    if (it.target.startsWith('http') || it.target.startsWith('mailto:')) {
+      window.open(it.target, it.target.startsWith('mailto:') ? '_self' : '_blank');
+      return;
+    }
+    var target = document.querySelector(it.target);
+    if (target) {
+      var top = target.getBoundingClientRect().top + window.pageYOffset - 56;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+  }
+
+  input.addEventListener('input', function(){
+    var q = input.value.trim().toLowerCase();
+    filtered = items
+      .map(function(it){ return { it: it, s: score(it, q) }; })
+      .filter(function(x){ return x.s > 0; })
+      .sort(function(a, b){ return b.s - a.s; })
+      .map(function(x){ return x.it; });
+    active = 0;
+    render();
+  });
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(filtered.length - 1, active + 1); render(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(0, active - 1); render(); }
+    else if (e.key === 'Enter') { e.preventDefault(); choose(); }
+    else if (e.key === 'Escape') { close(); }
+  });
+  document.addEventListener('keydown', function(e){
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      palette.classList.contains('open') ? close() : open();
+    } else if (e.key === 'Escape' && palette.classList.contains('open')) {
+      close();
+    }
+  });
+  if (openBtn) openBtn.addEventListener('click', open);
+  palette.addEventListener('click', function(e){ if (e.target === palette) close(); });
+})();
+
+// ============ PROJECT DETAIL MODAL ============
+(function(){
+  var modal = document.getElementById('projectModal');
+  var body = document.getElementById('modalBody');
+  var closeBtn = document.getElementById('modalClose');
+  if (!modal || !body) return;
+
+  function open(idx){
+    var p = PROJECTS[idx];
+    if (!p) return;
+    var techHtml = p.tech.map(function(t){ return '<span class="tech-tag">' + t + '</span>'; }).join('');
+    var highlightsHtml = (p.highlights || []).map(function(h){ return '<li>' + h + '</li>'; }).join('');
+    body.innerHTML =
+      '<span class="modal-tag">' + p.status + (p.role ? ' · ' + p.role : '') + '</span>' +
+      '<div class="modal-title">' + p.title + '</div>' +
+      '<div style="margin-top:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)">' + p.visual + '</div>' +
+      '<div class="modal-section"><h4>Overview</h4><p>' + (p.overview || p.desc) + '</p></div>' +
+      (highlightsHtml ? '<div class="modal-section"><h4>Highlights</h4><ul>' + highlightsHtml + '</ul></div>' : '') +
+      '<div class="modal-section"><h4>Impact</h4><p>' + p.impact + '</p></div>' +
+      '<div class="modal-section"><h4>Stack</h4><div class="modal-tech-grid">' + techHtml + '</div></div>';
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  window.openProjectModal = open;
+  closeBtn && closeBtn.addEventListener('click', close);
+  modal.querySelector('.modal-backdrop').addEventListener('click', close);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && modal.classList.contains('open')) close();
+  });
+  document.querySelectorAll('.project').forEach(function(card){
+    card.addEventListener('click', function(){ open(parseInt(card.dataset.idx, 10)); });
+  });
 })();
 </script>
 </body>
